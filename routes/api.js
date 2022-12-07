@@ -14,8 +14,8 @@ const headers = {
 
 router.get("/test", (req, res) => res.json({ msg: "backend works" }));
 
-router.get("/getblockcount", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getblockcount","params":[]}`;
+const generalRequest = function(requestPath, reqParams, res) {
+  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"${requestPath}","params":[${reqParams}]}`;
   var options = {
     url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
     method: "POST",
@@ -24,218 +24,50 @@ router.get("/getblockcount", (req, res) => {
   };
 
   callback = (error, response, body) => {
+    console.log(`GET /${requestPath} ${reqParams}`)
     if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
+      const data = JSON.parse(body)
+      res.send(data)
+      console.log(data)
+    }
+    else {
+      console.log('Error: ', body)
+      res.sendStatus(500)
     }
   };
   request(options, callback);
-});
+}
 
-router.get("/getbestblockhash", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getbestblockhash","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
+const basicRoute = function (rpc) {
+  router.get(`/${rpc}`, (req, res) => {
+    generalRequest(rpc, '', res)
+  })
+}
 
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
-
-router.get("/getconnectioncount", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getconnectioncount","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
-
-router.get("/getdifficulty", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getdifficulty","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
-
-router.get("/getblockchaininfo", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getblockchaininfo","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
-
-router.get("/getmininginfo", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getmininginfo","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
-
-router.get("/getpeerinfo", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getpeerinfo","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
-
-router.get("/getrawmempool", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getrawmempool","params":[]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
+basicRoute('getblockcount')
+basicRoute('getbestblockhash')
+basicRoute('getconnectioncount')
+basicRoute('getdifficulty')
+basicRoute('getblockchaininfo')
+basicRoute('getmininginfo')
+basicRoute('getpeerinfo')
+basicRoute('getrawmempool')
 
 router.get("/getblock/:hash", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getblock","params":["${
-    req.params.hash
-  }"]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
+  generalRequest('getblock', `"${req.params.hash}"`, res)
 });
 
-router.get("/getblockhash/:index", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getblockhash","params":[${
-    req.params.index
-  }]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
+router.get('/getblockhash/:index', (req, res) => {
+  generalRequest('getblockhash', req.params.index, res)
 });
 
-router.get("/getrawtransaction/:id", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"getrawtransaction","params":["${
-    req.params.id
-  }"]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
-
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
+router.get("/getrawtransaction/:blockhash/:id", (req, res) => {
+  generalRequest('getrawtransaction', `"${req.params.id}", true, "${req.params.blockhash}"`, res)
 });
 
 router.get("/decoderawtransaction/:hex", (req, res) => {
-  var dataString = `{"jsonrpc":"1.0","id":"curltext","method":"decoderawtransaction","params":["${
-    req.params.hex
-  }"]}`;
-  var options = {
-    url: `http://${USER}:${PASS}@127.0.0.1:8332/`,
-    method: "POST",
-    headers: headers,
-    body: dataString
-  };
+  generalRequest('decoderawtransaction', `"${req.params.hex}"`, res)
+})
 
-  callback = (error, response, body) => {
-    if (!error && response.statusCode == 200) {
-      const data = JSON.parse(body);
-      res.send(data);
-    }
-  };
-  request(options, callback);
-});
 
 module.exports = router;
