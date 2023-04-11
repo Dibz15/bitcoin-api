@@ -24,15 +24,15 @@ const generalRequest = function(requestPath, reqParams, res) {
   };
 
   callback = (error, response, body) => {
-    console.log(`GET /${requestPath} ${reqParams}`)
+    // console.log(`GET /${requestPath} ${reqParams}`)
     if (!error && response.statusCode == 200) {
       const data = JSON.parse(body)
       res.send(data)
-      console.log(data)
+      // console.log(data)
     }
     else {
       console.log('Error: ', body)
-      res.sendStatus(500)
+      res.send({ 'error': body })
     }
   };
   request(options, callback);
@@ -65,8 +65,16 @@ router.get("/getrawtransaction/:blockhash/:id", (req, res) => {
   generalRequest('getrawtransaction', `"${req.params.id}", true, "${req.params.blockhash}"`, res)
 });
 
+router.get("/getrawtransaction/:id", (req, res) => {
+  generalRequest('getrawtransaction', `"${req.params.id}", true`, res)
+});
+
 router.get("/decoderawtransaction/:hex", (req, res) => {
   generalRequest('decoderawtransaction', `"${req.params.hex}"`, res)
+})
+
+router.get("/getblockheader/:hash", (req, res) => {
+  generalRequest('getblockheader', `"${req.params.hash}", true`, res)
 })
 
 
